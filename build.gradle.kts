@@ -5,6 +5,7 @@ val jackson_version: String by project
 plugins {
     kotlin("jvm") version "1.6.10"
     application
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "me.darkkeks"
@@ -37,4 +38,8 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("MainKt")
+}
+
+tasks.build {
+    dependsOn("shadowJar")
 }

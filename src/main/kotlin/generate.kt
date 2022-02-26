@@ -3,18 +3,15 @@ import java.util.concurrent.ThreadLocalRandom
 
 object Generate {
     fun generateClientData(): ClientsData {
-//        val campaignCount = randomInt(min = 10, maxExclusive = 20)
-        val campaignCount = 1
+        val campaignCount = randomInt(min = 10, maxExclusive = 20)
         val campaigns: List<Campaign> = (0 until campaignCount).map { generateCampaign() }
         val campaignIds = campaigns.map { it.id }
 
-        val adGroupsCount = 1
-//        val adGroupsCount = randomInt(min = 100, maxExclusive = 200)
+        val adGroupsCount = randomInt(min = 100, maxExclusive = 200)
         val adGroups: List<AdGroup> = (0 until adGroupsCount).map { generateAdGroup(campaignIds.random()) }
         val adGroupIds = adGroups.map { it.id }
 
-        val bannerCount = 1
-//        val bannerCount = randomInt(min = 100, maxExclusive = 200)
+        val bannerCount = randomInt(min = 100, maxExclusive = 200)
         val banners: List<Banner> = (0 until bannerCount).map { generateBanners(adGroupIds.random()) }
 
         return ClientsData(

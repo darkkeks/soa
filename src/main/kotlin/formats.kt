@@ -13,11 +13,11 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
 val formats: List<Format> = listOf(
-//    JavaFormat(),
-//    XmlFormat(),
-//    JsonFormat(),
-    AvroFormat(),
-//    YamlFormat(),
+    JavaFormat(),
+    XmlFormat(),
+    JsonFormat(),
+//    AvroFormat(),
+    YamlFormat(),
 )
 
 interface Format {
