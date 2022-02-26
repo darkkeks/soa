@@ -13,14 +13,18 @@ version = "1.0"
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
+    implementation(project(":proto-kt"))
+
     implementation("com.fasterxml.jackson.core:jackson-core:$jackson_version")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jackson_version")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-avro:$jackson_version")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-protobuf:$jackson_version")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson_version")
+    implementation("org.msgpack:jackson-dataformat-msgpack:0.9.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version")
 
     implementation("org.apache.commons:commons-lang3:3.12.0")

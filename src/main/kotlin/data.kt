@@ -42,7 +42,7 @@ data class Banner(
     val image: String?,
 
     val links: List<Link>,
-    val prices: List<Double?>,
+    val prices: List<Double>,
 ) : Serializable
 
 data class Link(
