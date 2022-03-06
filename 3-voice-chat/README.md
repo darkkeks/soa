@@ -1,5 +1,26 @@
 # Chat client
 
+## Сборка и запуск
+
+```shell
+# build server
+./gradlew serverJar
+
+# build client for native platform
+./gradlew clientJar
+
+# build client for x86 linux
+./gradlew -Plwjgl-natives=natives-linux clientJar
+
+# launch server
+java -jar build/libs/*-server.jar
+
+# launch client
+java -jar build/libs/*-client.jar
+```
+
+## TODO:
+
 - [x] Установку имени пользователя;
 - [x] Подключение к серверу по сетевому имени/адресу;
 - [x] Отправку голосовых сообщений;
@@ -18,3 +39,8 @@
 ---
 - [x] Каждый пользователь может быть подключен только к одной комнате
 - [x] И слышать сообщения только от тех пользователей, что подключены к этой комнате.
+---
+- [ ] Поддержать opus
+- [ ] Валидировать voice пакеты
+- [ ] Закрывать соединения без лишнего шума в логах
+- [ ] Позволять клиенту переподключаться

@@ -1,26 +1,15 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm") version "1.6.10"
+
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 val lwjglVersion = "3.3.1"
 
-val lwjglNatives = listOf("os.name", "os.arch").map { System.getProperty(it)!! }.let { (name, arch) ->
-   when {
-        arrayOf("Linux", "FreeBSD", "SunOS", "Unit").any { name.startsWith(it) } ->
-            if (arrayOf("arm", "aarch64").any { arch.startsWith(it) })
-                "natives-linux${if (arch.contains("64") || arch.startsWith("armv8")) "-arm64" else "-arm32"}"
-            else
-                "natives-linux"
-        arrayOf("Mac OS X", "Darwin").any { name.startsWith(it) }                ->
-            "natives-macos${if (arch.startsWith("aarch64")) "-arm64" else ""}"
-        arrayOf("Windows").any { name.startsWith(it) }                           ->
-            if (arch.contains("64"))
-                "natives-windows${if (arch.startsWith("aarch64")) "-arm64" else ""}"
-            else
-                "natives-windows-x86"
-        else -> throw Error("Unrecognized or unsupported platform. Please set \"lwjglNatives\" manually")
-    }
-}
+val lwjglNatives: String = project.findProperty("lwjgl-natives") as? String
+    ?: resolveLwjglNatives()
 
 group = "me.darkkeks"
 version = "1.0-SNAPSHOT"
@@ -51,4 +40,44 @@ dependencies {
     runtimeOnly("org.lwjgl", "lwjgl", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-openal", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-opus", classifier = lwjglNatives)
+}
+
+task("serverJar", ShadowJar::class) {
+    from(sourceSets.main.get().output)
+    configurations = listOf(project.configurations.findByName("runtimeClasspath"))
+
+    archiveClassifier.set("server")
+    manifest {
+        attributes["Main-Class"] = "server.ServerAppKt"
+    }
+}
+
+task("clientJar", ShadowJar::class) {
+    from(sourceSets.main.get().output)
+    configurations = listOf(project.configurations.findByName("runtimeClasspath"))
+
+    archiveClassifier.set("client")
+    manifest {
+        attributes["Main-Class"] = "client.ClientAppKt"
+    }
+}
+
+fun resolveLwjglNatives(): String {
+    return listOf("os.name", "os.arch").map { System.getProperty(it)!! }.let { (name, arch) ->
+        when {
+            arrayOf("Linux", "FreeBSD", "SunOS", "Unit").any { name.startsWith(it) } ->
+                if (arrayOf("arm", "aarch64").any { arch.startsWith(it) })
+                    "natives-linux${if (arch.contains("64") || arch.startsWith("armv8")) "-arm64" else "-arm32"}"
+                else
+                    "natives-linux"
+            arrayOf("Mac OS X", "Darwin").any { name.startsWith(it) } ->
+                "natives-macos${if (arch.startsWith("aarch64")) "-arm64" else ""}"
+            arrayOf("Windows").any { name.startsWith(it) } ->
+                if (arch.contains("64"))
+                    "natives-windows${if (arch.startsWith("aarch64")) "-arm64" else ""}"
+                else
+                    "natives-windows-x86"
+            else -> throw Error("Unrecognized or unsupported platform. Please set \"lwjglNatives\" manually")
+        }
+    }
 }
