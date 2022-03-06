@@ -1,9 +1,16 @@
+package protocol
+
 import java.nio.ByteBuffer
+
+object ProtocolConstants {
+    const val defaultPort: Int = 8457
+}
 
 enum class PacketType(val id: Byte) {
     // serverbound
     CONNECT(0x00),
     JOIN_ROOM(0x01),
+    LEAVE_ROOM(0x04),
     TALKING_STATE(0x02),
     VOICE(0x03),
 
@@ -40,19 +47,29 @@ data class Packet(
     }
 
     companion object {
-        fun fromString(type: PacketType, string: String) = Packet(type, ByteBuffer.wrap(string.toByteArray()))
+        fun fromString(type: PacketType, string: String? = null): Packet {
+            val array = string?.toByteArray() ?: byteArrayOf()
+            return Packet(type, ByteBuffer.wrap(array))
+        }
     }
 }
 
+// Room list
 data class RoomListData(
     val rooms: List<RoomData>,
 )
 
 data class RoomData(
     val name: String,
-    val users: List<String>,
+    val users: List<RoomUserData>,
 )
 
+data class RoomUserData(
+    val login: String,
+    val talking: Boolean,
+)
+
+// Room update
 data class RoomUpdate(
     val type: RoomUpdateType,
     val name: String,
@@ -62,4 +79,7 @@ data class RoomUpdate(
 enum class RoomUpdateType {
     JOIN,
     LEAVE,
+
+    START_TALKING,
+    STOP_TALKING,
 }

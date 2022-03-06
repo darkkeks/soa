@@ -2,7 +2,9 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.lwjgl.BufferUtils
 import org.lwjgl.openal.AL
 import org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED
@@ -41,6 +43,7 @@ import org.lwjgl.openal.ALUtil.getStringList
 import org.lwjgl.system.MemoryUtil.NULL
 import org.slf4j.LoggerFactory
 import java.nio.ByteBuffer
+import kotlin.time.Duration.Companion.seconds
 
 
 object AudioUtils {
@@ -58,6 +61,12 @@ object AudioUtils {
 
     private const val inputFormat = AL_FORMAT_MONO16
     private const val outputFormat = AL_FORMAT_MONO16
+
+    suspend fun loopbackAudio() = coroutineScope {
+        val channel = Channel<ByteBuffer>(capacity = Channel.UNLIMITED)
+        launch { startCapture(channel) }
+        launch { startPlayback(channel) }
+    }
 
     suspend fun startCapture(channel: Channel<ByteBuffer>) {
         // select input device

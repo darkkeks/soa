@@ -36,7 +36,9 @@ dependencies {
     implementation("io.ktor:ktor-network:1.6.7")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
+
+    implementation("com.github.ajalt.clikt:clikt:3.4.0")
 
     implementation("org.apache.logging.log4j:log4j-api:2.17.2")
     implementation("org.apache.logging.log4j:log4j-core:2.17.2")

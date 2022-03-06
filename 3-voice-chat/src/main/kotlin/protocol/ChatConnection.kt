@@ -1,3 +1,5 @@
+package protocol
+
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
@@ -5,9 +7,10 @@ import java.nio.ByteBuffer
 
 open class ChatConnection(
     private val socket: Socket,
-    private val input: ByteReadChannel,
-    private val output: ByteWriteChannel,
 ) {
+    private val input: ByteReadChannel = socket.openReadChannel()
+    private val output: ByteWriteChannel = socket.openWriteChannel()
+
     suspend fun readPacket(): Packet {
         val typeId = input.readByte()
         val type = PacketType.byId(typeId)
