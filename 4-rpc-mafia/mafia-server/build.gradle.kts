@@ -11,7 +11,7 @@ group = "me.darkkeks.soa.mafia.client"
 version = "1.0-SNAPSHOT"
 
 application {
-    mainClass.set("me.darkekks.soa.mafia.server.ServerAppKt")
+    mainClass.set("me.darkkeks.soa.mafia.server.ServerAppKt")
 }
 
 dependencies {
