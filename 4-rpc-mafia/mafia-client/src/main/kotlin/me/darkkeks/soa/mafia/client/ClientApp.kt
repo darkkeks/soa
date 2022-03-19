@@ -52,7 +52,7 @@ class MafiaClient(
         while (true) {
             val command = prompt("")
                 ?: continue
-            when (command){
+            when (command) {
                 "end" -> {
                     mafiaServerStub.endDay(endDayRequest {
                         token = this@MafiaClient.token!!
