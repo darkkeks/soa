@@ -2,58 +2,153 @@ syntax = "proto3";
 
 package soa.mafia.model;
 
+import "google/protobuf/empty.proto";
+
 option java_package = "me.darkkeks.soa.mafia.model";
 option java_multiple_files = true;
 
+message LoginInfo {
+  string login = 1;
+}
 
+// Requests
 
-//message ClientData {
-//  int64 id = 1;
-//  string name = 2;
-//  repeated Campaign campaigns = 3;
-//  repeated AdGroup ad_groups = 4;
-//  repeated Banner banners = 5;
-//}
-//
-//message Campaign {
-//  int64 id = 1;
-//  Strategy strategy = 2;
-//  optional string href = 3;
-//}
-//
-//message Strategy {
-//  int32 type = 1;
-//  string data = 2;
-//}
-//
-//message AdGroup {
-//  int64 id = 1;
-//  int64 campaign_id = 2;
-//
-//  repeated int64 regions = 3;
-//  repeated string keywords = 4;
-//  repeated Multiplier multipliers = 5;
-//}
-//
-//message Multiplier {
-//  string condition = 1;
-//  int32 multiplier = 2;
-//}
-//
-//message Banner {
-//  int64 id = 1;
-//  int64 ad_group_id = 2;
-//
-//  string text1 = 3;
-//  optional string text2 = 4;
-//
-//  optional string image = 5;
-//
-//  repeated Link links = 6;
-//  repeated double prices = 7;
-//}
-//
-//message Link {
-//  string href = 1;
-//  string text = 2;
-//}
+message ChatRequest {
+  string token = 1;
+  string text = 2;
+}
+
+message ChatResponse {
+  enum ChatErrorType {
+    NOT_IN_A_GAME = 0;
+    NOT_ALLOWED = 1;
+    NOT_AUTHORIZED = 2;
+  }
+  optional ChatErrorType error = 1;
+}
+
+message EndDayRequest {
+  string token = 1;
+}
+
+message EndDayResponse {
+  enum EndDayErrorType {
+    NOT_IN_A_GAME = 0;
+    NOT_ALLOWED = 1;
+    NOT_AUTHORIZED = 2;
+  }
+  optional EndDayErrorType error = 1;
+}
+
+message CheckRequest {
+  string token = 1;
+  string target = 2;
+}
+
+message CheckResponse {
+  enum CheckErrorType {
+    NOT_IN_A_GAME = 0;
+    NOT_AUTHORIZED = 2;
+  }
+  optional GameRole role = 1;
+  optional CheckErrorType error = 2;
+}
+
+message PublishRequest {
+  string token = 1;
+}
+
+message PublishResponse {
+  enum PublishErrorType {
+    NOT_IN_A_GAME = 0;
+    NOT_ALLOWED = 1;
+    ALREADY_PUBLISHED = 2;
+    NOT_AUTHORIZED = 3;
+  }
+  optional PublishErrorType error = 2;
+}
+
+message VoteRequest {
+  string token = 1;
+  string target = 2;
+}
+
+message VoteResponse {
+  enum VoteErrorType {
+    NOT_IN_A_GAME = 0;
+    ALREADY_VOTED = 1;
+    INVALID_TARGET = 2;
+    NOT_AUTHORIZED = 3;
+  }
+  optional VoteErrorType error = 1;
+}
+
+// Updates
+
+message InitUpdate {
+  repeated string players = 1;
+  string token = 2;
+}
+
+message PlayerUpdate {
+  enum Type {
+    JOIN = 0;
+    LEAVE = 1;
+  }
+  Type update_type = 1;
+  string login = 2;
+}
+
+enum GameRole {
+  CIVILIAN = 0;
+  MAFIA = 1;
+  DETECTIVE = 2;
+}
+
+message SessionUpdate {
+  GameRole role = 1;
+  repeated string players = 2;
+}
+
+message StateUpdate {
+  enum GameState {
+    DAY = 0;
+    NIGHT = 1;
+  }
+  GameState state = 1;
+  optional string killed = 2;
+}
+
+message GameEndUpdate {
+  enum Winner {
+    CIVILIANS = 0;
+    MAFIA = 1;
+  }
+  Winner winner = 1;
+}
+
+message ChatUpdate {
+  string from = 1;
+  string text = 2;
+}
+
+message GameUpdate {
+  oneof update {
+    InitUpdate init_update = 1;
+    PlayerUpdate player_update = 2;
+    SessionUpdate session_update = 3;
+    StateUpdate state_update = 4;
+    GameEndUpdate game_end_update = 5;
+    ChatUpdate chat_update = 6;
+  }
+}
+
+service MafiaServer {
+  rpc Connect(LoginInfo) returns (stream GameUpdate);
+
+  rpc EndDay(EndDayRequest) returns (EndDayResponse);
+  rpc SendMessage(ChatRequest) returns (ChatResponse);
+  rpc Check(CheckRequest) returns (CheckResponse);
+  rpc PublishMafia(PublishRequest) returns (PublishResponse);
+  rpc Vote(VoteRequest) returns (VoteResponse);
+}

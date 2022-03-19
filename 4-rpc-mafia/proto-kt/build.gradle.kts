@@ -13,6 +13,8 @@ plugins {
 dependencies {
     api(kotlin("stdlib"))
 
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+
     api("com.google.protobuf:protobuf-java-util:$protobufVersion")
     api("com.google.protobuf:protobuf-kotlin:$protobufVersion")
 
