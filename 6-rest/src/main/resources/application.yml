@@ -1,6 +1,11 @@
-
 spring:
   datasource:
-    url: jdbc:postgresql://postgres/rest
+    url: jdbc:postgresql://localhost/rest
     username: postgres
     password: root
+
+
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+
