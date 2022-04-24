@@ -1,14 +1,16 @@
-package me.darkkeks.soa.rest
+package me.darkkeks.soa.rest.rest
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Table
-import org.springframework.data.repository.CrudRepository
+import me.darkkeks.soa.rest.AddUserRequest
+import me.darkkeks.soa.rest.StatsRepository
+import me.darkkeks.soa.rest.Task
+import me.darkkeks.soa.rest.TaskQueueRepository
+import me.darkkeks.soa.rest.TaskStatus
+import me.darkkeks.soa.rest.UpdateUserRequest
+import me.darkkeks.soa.rest.User
+import me.darkkeks.soa.rest.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Repository
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -17,42 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-
-enum class Sex {
-    MALE,
-    FEMALE,
-    OTHER,
-}
-
-@Table("users")
-data class User(
-    @Id
-    val uid: Long = 0,
-    val name: String,
-    val avatar: String,
-    val sex: Sex,
-    val email: String,
-)
-
-data class AddUserRequest(
-    val name: String,
-    val avatar: String,
-    val sex: Sex,
-    val email: String,
-)
-
-data class UpdateUserRequest(
-    val name: String,
-    val avatar: String,
-    val sex: Sex,
-    val email: String,
-)
-
-@Repository
-interface UserRepository : CrudRepository<User, Long> {
-    fun findByName(name: String): User?
-    fun findByNameIn(names: List<String>): List<User>
-}
 
 @RestController
 @RequestMapping("/user")
@@ -104,12 +70,40 @@ class UserController(
         userRepository.delete(user)
         return ResponseEntity(HttpStatus.OK)
     }
-
 }
 
-@SpringBootApplication
-class MafiaApplication
+@RestController
+@RequestMapping("/stats")
+class StatsController(
+    private val userRepository: UserRepository,
+    private val statsRepository: StatsRepository,
+    private val taskQueueRepository: TaskQueueRepository,
+) {
 
-fun main(args: Array<String>) {
-    runApplication<MafiaApplication>(*args)
+    @GetMapping("/result")
+    fun getResult(@RequestParam taskId: Long): ResponseEntity<String> {
+        val task = taskQueueRepository.findById(taskId).orElse(null)
+            ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+
+        if (task.status != TaskStatus.READY) {
+            return ResponseEntity(HttpStatus.NO_CONTENT)
+        }
+
+        return ResponseEntity.ok(task.result)
+    }
+
+    @PostMapping("/request-stats")
+    fun requestStats(@RequestParam name: String): ResponseEntity<Task> {
+        val user = userRepository.findByName(name)
+            ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+
+        val task = taskQueueRepository.save(
+            Task(
+                uid = user.uid,
+                status = TaskStatus.NEW,
+            )
+        )
+
+        return ResponseEntity.ok(task)
+    }
 }
