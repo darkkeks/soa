@@ -1,15 +1,16 @@
+import soa.conventions.Versions.grpcVersion
+
 plugins {
-    kotlin("jvm")
+    id("soa.application")
 }
 
-val grpcVersion: String by project
-
-group = "me.darkkeks.soa.mafia.client"
-version = "1.0-SNAPSHOT"
+application {
+    mainClass.set("me.darkkeks.soa.mafia.client.ClientAppKt")
+}
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(project(":proto-kt"))
+    implementation(project(":4-rpc-mafia:proto-kt"))
 
     implementation("io.grpc:grpc-netty:$grpcVersion")
 

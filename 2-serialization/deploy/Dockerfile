@@ -7,13 +7,13 @@ COPY gradle /build/gradle
 RUN ./gradlew --version
 
 COPY . /build
-RUN ./gradlew 3-voice-chat:serverJar -x test --no-daemon
+RUN ./gradlew 2-serialization:build -x test --no-daemon
 
 FROM openjdk:11-jdk-slim
 RUN mkdir /app
 
 # expecting a single jar
-COPY --from=build /build/3-voice-chat/build/libs/3-voice-chat-server.jar /app/app.jar
+COPY --from=build /build/2-serialization/build/libs/2-serialization-all.jar /app/app.jar
 
 ENTRYPOINT ["java", "-Xmx512M", "-jar", "/app/app.jar"]
 

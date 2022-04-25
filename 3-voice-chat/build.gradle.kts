@@ -1,22 +1,14 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("soa.kotlin-conventions")
+    id("com.github.johnrengelman.shadow")
 }
 
 val lwjglVersion = "3.3.1"
 
 val lwjglNatives: String = project.findProperty("lwjgl-natives") as? String
     ?: resolveLwjglNatives()
-
-group = "me.darkkeks"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation(kotlin("stdlib"))
@@ -42,26 +34,6 @@ dependencies {
     runtimeOnly("org.lwjgl", "lwjgl-opus", classifier = lwjglNatives)
 }
 
-task("serverJar", ShadowJar::class) {
-    from(sourceSets.main.get().output)
-    configurations = listOf(project.configurations.findByName("runtimeClasspath"))
-
-    archiveClassifier.set("server")
-    manifest {
-        attributes["Main-Class"] = "server.ServerAppKt"
-    }
-}
-
-task("clientJar", ShadowJar::class) {
-    from(sourceSets.main.get().output)
-    configurations = listOf(project.configurations.findByName("runtimeClasspath"))
-
-    archiveClassifier.set("client")
-    manifest {
-        attributes["Main-Class"] = "client.ClientAppKt"
-    }
-}
-
 fun resolveLwjglNatives(): String {
     return listOf("os.name", "os.arch").map { System.getProperty(it)!! }.let { (name, arch) ->
         when {
@@ -80,4 +52,23 @@ fun resolveLwjglNatives(): String {
             else -> throw Error("Unrecognized or unsupported platform. Please set \"lwjglNatives\" manually")
         }
     }
+}
+
+val serverJar = task("serverJar", ShadowJar::class) {
+    archiveClassifier.set("server")
+    from(sourceSets.main.get().output)
+    configurations.add(project.configurations.runtimeClasspath.get())
+    manifest { attributes["Main-Class"] = "me.darkkeks.soa.voicechat.server.ServerAppKt" }
+}
+
+val clientJar = task("clientJar", ShadowJar::class) {
+    archiveClassifier.set("client")
+    from(sourceSets.main.get().output)
+    configurations.add(project.configurations.runtimeClasspath.get())
+    manifest { attributes["Main-Class"] = "me.darkkeks.soa.voicechat.client.ClientAppKt" }
+}
+
+tasks.build {
+    dependsOn.add(serverJar)
+    dependsOn.add(clientJar)
 }

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package soa.client;
+package soa.serialization;
 
-option java_package = "me.darkkeks.soa.client";
+option java_package = "me.darkkeks.soa.serialization.proto";
 option java_multiple_files = true;
 
 message ClientData {

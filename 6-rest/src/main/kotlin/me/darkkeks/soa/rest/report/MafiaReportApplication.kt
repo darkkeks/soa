@@ -41,9 +41,9 @@ class TasksWorker(
     }
 }
 
-@SpringBootApplication
-class MafiaReportApplication
-
-fun main(args: Array<String>) {
-    runApplication<MafiaReportApplication>(*args)
-}
+// @SpringBootApplication
+// class MafiaReportApplication
+//
+// fun main(args: Array<String>) {
+//     runApplication<MafiaReportApplication>(*args)
+// }

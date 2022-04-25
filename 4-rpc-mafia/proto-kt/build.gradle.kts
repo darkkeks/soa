@@ -1,13 +1,10 @@
 import com.google.protobuf.gradle.*
-
-val protobufVersion: String by project
-val grpcVersion: String by project
-val grpcKotlinVersion: String by project
+import soa.conventions.Versions.grpcKotlinVersion
+import soa.conventions.Versions.grpcVersion
+import soa.conventions.Versions.protobufVersion
 
 plugins {
-    kotlin("jvm")
-    id("com.google.protobuf")
-    idea
+    id("soa.proto")
 }
 
 dependencies {
@@ -23,28 +20,14 @@ dependencies {
     api("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
 }
 
-sourceSets {
-    main {
-        proto {
-            srcDir("../proto")
-        }
-    }
-}
-
 protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:$protobufVersion"
-    }
     plugins {
         id("grpc") { artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion" }
         id("grpckt") { artifact = "io.grpc:protoc-gen-grpc-kotlin:$grpcKotlinVersion:jdk7@jar" }
     }
     generateProtoTasks {
-        ofSourceSet("main").forEach {
-            it.builtins {
-                id("kotlin")
-            }
-            it.plugins {
+        all().configureEach {
+            plugins {
                 id("grpc")
                 id("grpckt")
             }
