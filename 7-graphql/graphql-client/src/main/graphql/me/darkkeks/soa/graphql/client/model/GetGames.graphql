@@ -1,0 +1,16 @@
+query GetGames($input: GqGameSelectorInput!) {
+    games(input: $input) {
+        id
+        status
+        players {
+            name
+            role
+            score
+        }
+        comments {
+            author
+            content
+            createdAt
+        }
+    }
+}

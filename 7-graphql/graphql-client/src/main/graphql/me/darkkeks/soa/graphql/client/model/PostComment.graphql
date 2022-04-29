@@ -1,0 +1,3 @@
+mutation PostComment($input: GqAddCommentInput!) {
+    postComment(addComment: $input)
+}

@@ -1,4 +1,6 @@
+import soa.conventions.Versions.cliktVersion
 import soa.conventions.Versions.grpcVersion
+import soa.conventions.Versions.log4jVersion
 
 plugins {
     id("soa.application")
@@ -14,9 +16,9 @@ dependencies {
 
     implementation("io.grpc:grpc-netty:$grpcVersion")
 
-    implementation("com.github.ajalt.clikt:clikt:3.4.0")
+    implementation("com.github.ajalt.clikt:clikt:$cliktVersion")
 
-    implementation("org.apache.logging.log4j:log4j-api:2.17.2")
-    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2")
+    implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
+    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
 }

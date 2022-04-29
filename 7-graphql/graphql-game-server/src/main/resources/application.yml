@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost/rest
+    username: postgres
+    password: root
+
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+
+graphql:
+  spqr:
+    gui:
+      enabled: true
+    ws:
+      enabled: true

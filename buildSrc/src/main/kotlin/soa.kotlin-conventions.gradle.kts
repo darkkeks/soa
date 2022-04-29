@@ -15,7 +15,8 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+        @Suppress("SuspiciousCollectionReassignment")
+        freeCompilerArgs += "-Xjsr305=strict"
         jvmTarget = "11"
     }
 }

@@ -1,0 +1,9 @@
+subscription GetScoreboard($gameId: Long!){
+    scoreboard(gameId: $gameId) {
+        updates {
+            name
+            role
+            score
+        }
+    }
+}
